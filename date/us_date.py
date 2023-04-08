@@ -36,7 +36,3 @@ class Table:
 
         for row in rows:
             print(row)
-
-
-a = Table()
-a.db_read()
