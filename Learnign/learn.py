@@ -24,14 +24,9 @@ class Learn:
     def learning(self):
         with open('story.txt', 'r', encoding='utf-8') as story:
             for i_story in story.read().split():
-                for j_story in i_story.split():
-                    while True:
-                        print(f'Прочитай: {j_story}')
-                        if self._record_volume().lower() == j_story.lower():
-                            break
-
-                        print(f'Неправильно, скажи ещё раз')
-
-
-a = Learn()
-a.learning()
+                while True:
+                    print(f'Прочитай: {i_story}')
+                    if self._record_volume().lower() == i_story.lower():
+                        break
+                    print(f'Неправильно, скажи ещё раз')
+        
