@@ -1,6 +1,5 @@
 from random import randint
 
-
 class Table:
     @staticmethod
     def check_answer(answer):
