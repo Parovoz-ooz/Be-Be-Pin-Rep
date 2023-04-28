@@ -1,0 +1,188 @@
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+
+using namespace std;
+
+
+struct Record {
+    int id;
+    string name;
+    string phone;
+};
+
+
+class Database {
+public:
+    Database(const string& filename);
+    ~Database();
+
+
+    void addRecord(const Record& record);
+    void deleteRecord(int id);
+    void searchRecords(const string& query);
+    void viewRecords();
+    void editRecord(int id, const Record& record);
+
+
+private:
+    string filename;
+    vector<Record> records;
+
+    void loadRecords();
+    void saveRecords();
+};
+
+
+Database::Database(const string& filename) : filename(filename) {
+    loadRecords();
+}
+
+
+Database::~Database() {
+    saveRecords();
+}
+
+
+void Database::addRecord(const Record& record) {
+    int id = records.empty() ? 1 : records.back().id + 1;
+    records.push_back({ id, record.name, record.phone });
+    cout << "запись успешно добавлена\n";
+}
+
+
+void Database::deleteRecord(int id) {
+    auto it = find_if(records.begin(), records.end(), [id](const Record& r) { return r.id == id; });
+    if (it != records.end()) {
+        records.erase(it);
+        cout << "запись успешно удалена!\n";
+    }
+    else {
+        cout << "Record not found!\n";
+    }
+}
+
+
+void Database::searchRecords(const string& query) {
+    auto it = find_if(records.begin(), records.end(), [query](const Record& r) { return r.name.find(query) != string::npos || r.phone.find(query) != string::npos; });
+    if (it != records.end()) {
+        cout << "результаты поиска\n";
+        for (; it != records.end(); ++it) {
+            cout << it->id << "\t" << it->name << "\t" << it->phone << endl;
+        }
+    }
+    else {
+        cout << "записей не найдено\n";
+    }
+}
+
+
+void Database::viewRecords() {
+    if (records.empty()) {
+        cout << "записей не найдено\n";
+    }
+    else {
+        cout << "записи\n";
+        for (const auto& r : records) {
+            cout << r.id << "\t" << r.name << "\t" << r.phone << endl;
+        }
+    }
+}
+
+
+void Database::editRecord(int id, const Record& record) {
+    auto it = find_if(records.begin(), records.end(), [id](const Record& r) { return r.id == id; });
+    if (it != records.end()) {
+        it->name = record.name;
+        it->phone = record.phone;
+        cout << "запись успешно отредактирована\n";
+    }
+    else {
+        cout << "запись не найдена\n";
+    }
+}
+
+
+void Database::loadRecords() {
+    ifstream file(filename);
+    if (file.is_open()) {
+        Record record;
+        while (file >> record.id >> record.name >> record.phone) {
+            records.push_back(record);
+        }
+        file.close();
+    }
+}
+
+
+void Database::saveRecords() {
+    ofstream file(filename);
+    if (file.is_open()) {
+        for (const auto& r : records) {
+            file << r.id << "\t" << r.name << "\t" << r.phone << endl;
+        }
+        file.close();
+    }
+}
+
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    Database db("records.txt");
+
+
+    while (true) {
+        cout << "1. добавить запись\n2. удалить запись\n3. поиск записей\n4. просмотр записей\n5. изменить запись\n6. выход\n";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+        case 1: {
+            Record record;
+            cout << "введите имя ";
+            cin >> record.name;
+            cout << "введите телефон ";
+            cin >> record.phone;
+            db.addRecord(record);
+            break;
+        }
+        case 2: {
+            int id;
+            cout << "введите идентификатор записи ";
+            cin >> id;
+            db.deleteRecord(id);
+            break;
+        }
+        case 3: {
+            string query;
+            cout << "введите поисковый запрос ";
+            cin >> query;
+            db.searchRecords(query);
+            break;
+        }
+        case 4: {
+            db.viewRecords();
+            break;
+        }
+        case 5: {
+            int id;
+            cout << "введите идентификатор записи ";
+            cin >> id;
+            Record record;
+            cout << "введите имя ";
+            cin >> record.name;
+            cout << "введите телефон ";
+            cin >> record.phone;
+            db.editRecord(id, record);
+            break;
+        }
+        case 6:
+            return 0;
+        default:
+            cout << "неверный выбор\n";
+        }
+    }
+}
