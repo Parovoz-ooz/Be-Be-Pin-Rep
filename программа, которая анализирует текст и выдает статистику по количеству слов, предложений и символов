@@ -1,0 +1,59 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <algorithm>
+#include <cctype>
+
+
+using namespace std;
+
+
+int countWords(const string& text) {
+    stringstream ss(text);
+    int count = 0;
+    string word;
+    while (ss >> word) {
+        ++count;
+    }
+    return count;
+}
+
+
+int countSentences(const string& text) {
+    int count = 0;
+    for (char c : text) {
+        if (c == '.' || c == '!' || c == '?') {
+            ++count;
+        }
+    }
+    return count;
+}
+
+
+int countCharacters(const string& text) {
+    int count = 0;
+    for (char c : text) {
+        if (!isspace(c)) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+
+int main() {
+    setlocale(LC_ALL, "Russian");
+    cout << "введите текст\n";
+    string text;
+    getline(cin, text);
+
+    int numWords = countWords(text);
+    int numSentences = countSentences(text);
+    int numCharacters = countCharacters(text);
+
+    cout << "число слов " << numWords << '\n';
+    cout << "количество предложений " << numSentences << '\n';
+    cout << "количество символов " << numCharacters << '\n';
+
+    return 0;
+}
