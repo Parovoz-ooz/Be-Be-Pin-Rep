@@ -1,0 +1,132 @@
+
+
+
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+
+
+struct Transaction {
+    enum class Type {
+        Income,
+        Expense
+    };
+
+    Type type;
+    double amount;
+    std::string description;
+};
+
+
+class FinanceManager {
+public:
+    void addTransaction(Transaction::Type type, double amount, const std::string& description) {
+        transactions.push_back({ type, amount, description });
+        std::cout << "Transaction added" << std::endl;
+    }
+
+
+    double getTotalIncome() const {
+        double totalIncome = 0.0;
+        for (const auto& transaction : transactions) {
+            if (transaction.type == Transaction::Type::Income) {
+                totalIncome += transaction.amount;
+            }
+        }
+        return totalIncome;
+    }
+
+
+    double getTotalExpenses() const {
+        double totalExpenses = 0.0;
+        for (const auto& transaction : transactions) {
+            if (transaction.type == Transaction::Type::Expense) {
+                totalExpenses += transaction.amount;
+            }
+        }
+        return totalExpenses;
+    }
+
+
+    double getBalance() const {
+        return getTotalIncome() - getTotalExpenses();
+    }
+
+
+    void printTransactions() const {
+        for (const auto& transaction : transactions) {
+            std::cout << (transaction.type == Transaction::Type::Income ? "Income: " : "Expense: ");
+            std::cout << transaction.amount << " - " << transaction.description << std::endl;
+        }
+    }
+
+
+private:
+    std::vector<Transaction> transactions;
+};
+
+
+int main() {
+    setlocale(LC_ALL, "ru");
+    FinanceManager financeManager;
+
+    while (true) {
+        std::cout << "введите команду добавить, доход, расход, баланс, список, выход ";
+        std::string command;
+        std::getline(std::cin, command);
+
+
+        if (command == "1") {
+            std::cout << "Введите тип операции доход и расход: ";
+            std::string type;
+            std::getline(std::cin, type);
+            if (type == "1") {
+                std::cout << "Введите сумму дохода: ";
+                double amount;
+                std::cin >> amount;
+                std::cin.ignore(); // Ignore newline character
+                std::cout << "Введите описание дохода: ";
+                std::string description;
+                std::getline(std::cin, description);
+                financeManager.addTransaction(Transaction::Type::Income, amount, description);
+            }
+            else if (type == "3") {
+                std::cout << "Введите сумму расходов: ";
+                double amount;
+                std::cin >> amount;
+                std::cin.ignore(); // Ignore newline character
+                std::cout << "Введите описание расходов ";
+                std::string description;
+                std::getline(std::cin, description);
+                financeManager.addTransaction(Transaction::Type::Expense, amount, description);
+            }
+            else {
+                std::cout << "Недопустимый тип транзакции" << std::endl;
+            }
+        }
+        else if (command == "1") {
+            std::cout << "Общая прибыль: " << financeManager.getTotalIncome() << std::endl;
+        }
+        else if (command == "2") {
+            std::cout << "Суммарные расходы: " << financeManager.getTotalExpenses() << std::endl;
+        }
+        else if (command == "3") {
+            std::cout << "Баланс: " << financeManager.getBalance() << std::endl;
+        }
+        else if (command == "4") {
+            setlocale(LC_ALL, "ru");
+            financeManager.printTransactions();
+        }
+        else if (command == "5") {
+            break;
+        }
+        else {
+            std::cout << "Неверная команда" << std::endl;
+        }
+    }
+
+
+    return 0;
+}
