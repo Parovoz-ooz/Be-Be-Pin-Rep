@@ -1,0 +1,168 @@
+#include <iostream>
+#include <locale>
+#include <string>
+#include <vector>
+
+
+class Client {
+public:
+    Client() {}
+    Client(const std::string& name, const std::string& surname, int age, double creditHistory, double income, double expenses) :
+        name(name), surname(surname), age(age), creditHistory(creditHistory), income(income), expenses(expenses) {}
+
+
+    std::string getName() const { return name; }
+    std::string getSurname() const { return surname; }
+    int getAge() const { return age; }
+    double getCreditHistory() const { return creditHistory; }
+    double getIncome() const { return income; }
+    double getExpenses() const { return expenses; }
+
+
+private:
+    std::string name;
+    std::string surname;
+    int age;
+    double creditHistory;
+    double income;
+    double expenses;
+};
+
+
+class CreditRiskAnalyzer {
+public:
+    CreditRiskAnalyzer() {}
+
+
+    void addClient(const Client& client) {
+        clients.push_back(client);
+    }
+
+
+    void analyze() {
+        for (const auto& client : clients) {
+            double creditScore = calculateCreditScore(client.getCreditHistory(), client.getIncome(), client.getExpenses());
+            std::cout << "клиент " << client.getSurname() << " " << client.getName() << std::endl;
+            std::cout << "кредитный рейтинг " << creditScore << std::endl;
+
+
+            if (creditScore >= 70.0) {
+                std::cout << "низкий кредитный риск" << std::endl;
+            }
+            else if (creditScore >= 50.0 && creditScore < 70.0) {
+                std::cout << "средний кредитный риск" << std::endl;
+            }
+            else {
+                std::cout << "высокий кредитный риск" << std::endl;
+            }
+            std::cout << std::endl;
+        }
+    }
+
+
+private:
+    double calculateCreditScore(double creditHistory, double income, double expenses) {
+        // расчет кредитного рейтинга на основе кредитной истории доходов и расходов
+        double creditScore = 0.0;
+
+        if (creditHistory >= 0.0 && creditHistory < 2.0) {
+            creditScore += 20.0;
+        }
+        else if (creditHistory >= 2.0 && creditHistory < 5.0) {
+            creditScore += 40.0;
+        }
+        else if (creditHistory >= 5.0 && creditHistory < 10.0) {
+            creditScore += 60.0;
+        }
+        else if (creditHistory >= 10.0) {
+            creditScore += 80.0;
+        }
+
+
+        if (income >= 0.0 && income < 50000.0) {
+            creditScore += 10.0;
+        }
+        else if (income >= 50000.0 && income < 100000.0) {
+            creditScore += 20.0;
+        }
+        else if (income >= 100000.0 && income < 200000.0) {
+            creditScore += 30.0;
+        }
+        else if (income >= 200000.0) {
+            creditScore += 40.0;
+        }
+
+
+        if (expenses >= 0.0 && expenses < 25000.0) {
+            creditScore += 10.0;
+        }
+        else if (expenses >= 25000.0 && expenses < 50000.0) {
+            creditScore += 20.0;
+        }
+        else if (expenses >= 50000.0 && expenses < 100000.0) {
+            creditScore += 30.0;
+        }
+        else if (expenses >= 100000.0) {
+            creditScore += 40.0;
+        }
+
+
+        return creditScore;
+    }
+
+
+    std::vector<Client> clients;
+};
+
+
+int main() {
+    setlocale(LC_ALL, "ru"); // установка локали для корректного отображения русского языка
+
+
+    CreditRiskAnalyzer analyzer;
+
+
+    // запрос данных о клиентах через консоль
+    std::cout << "введите данные о клиентах " << std::endl;
+    while (true) {
+        std::string name, surname;
+        int age;
+        double creditHistory, income, expenses;
+
+        std::cout << "имя ";
+        std::cin >> name;
+        if (name == "exit") { // для выхода из цикла ввода данных можно ввести слово exit
+            break;
+        }
+
+
+        std::cout << "фамилия ";
+        std::cin >> surname;
+
+
+        std::cout << "возраст ";
+        std::cin >> age;
+
+
+        std::cout << "кредитная история ";
+        std::cin >> creditHistory;
+
+
+        std::cout << "доход ";
+        std::cin >> income;
+
+
+        std::cout << "расходы ";
+        std::cin >> expenses;
+
+
+        analyzer.addClient(Client(name, surname, age, creditHistory, income, expenses));
+    }
+
+
+    // анализ клиентов и вывод результата
+    analyzer.analyze();
+
+
+    return 0;
+}
