@@ -1,0 +1,60 @@
+
+
+
+
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
+
+
+#include "json.hpp"
+
+
+using json = nlohmann::json;
+
+
+int main() {
+    // чтение json из файла
+    std::ifstream inputFile("data.json");
+    if (!inputFile) {
+        std::cerr << "не удалось открыть входной файл" << std::endl;
+        return 1;
+    }
+
+
+    json jsonData;
+    inputFile >> jsonData;
+    inputFile.close();
+
+    // обработка данных json
+    std::string name = jsonData["Имя"];
+    int age = jsonData["Возраст"];
+
+
+    std::cout << "Имя: " << name << std::endl;
+    std::cout << "Возраст: " << age << std::endl;
+
+
+    // запись json в файл
+    json outputData;
+    //outputData["Имя"]
+    //outputData["Возраст"]
+
+
+    std::stringstream outputStream;
+    outputStream << std::setw(4) << outputData << std::endl;
+
+    std::ofstream outputFile("output.json");
+    if (!outputFile) {
+        std::cerr << "не удалось открыть выходной файл" << std::endl;
+        return 1;
+    }
+
+
+    outputFile << outputStream.str();
+    outputFile.close();
+
+
+    return 0;
+}
